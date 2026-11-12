@@ -2,8 +2,9 @@
 {% block title %}Book not found{% endblock %}
 {% block content %}
 <section class="empty-state">
+  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12"/><path d="m9.5 8.5 5 5m0-5-5 5"/></svg>
   <h1>Book not found</h1>
-  <p>Sorry, the book you are looking for does not exist or is no longer available in our store.</p>
+  <p>This book is not on our shelves. It may have been removed, or the link is wrong.</p>
   <a class="btn btn-primary" href="{{ back }}">Back to books</a>
 </section>
 {% endblock %}
