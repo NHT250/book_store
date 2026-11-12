@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "macros.html" import field_error, csrf %}
+{% block title %}Authors{% endblock %}
+{% block content %}
+<h1>Authors</h1>
+{% include "staff/_nav.html" %}
+<div class="two-col">
+  <section class="card">
+    <h2>New author</h2>
+    <form method="post" novalidate data-validate>
+      {{ csrf() }}
+      <label for="name">Name *</label>
+      <input id="name" name="name" value="{{ form.name or '' }}" required maxlength="100">
+      {{ field_error(errors, 'name') }}
+      <label for="bio">Biography</label>
+      <textarea id="bio" name="bio" rows="3" maxlength="2000">{{ form.bio or '' }}</textarea>
+      {{ field_error(errors, 'bio') }}
+      <button class="btn btn-primary btn-block" type="submit">Create author</button>
+    </form>
+  </section>
+  <section class="card table-card">
+    <h2>All authors <span class="muted">({{ authors|length }})</span></h2>
+    <div class="table-scroll"><table class="data-table">
+      <thead><tr><th>Name</th><th>Biography</th><th class="num">Books</th><th></th></tr></thead>
+      <tbody>
+      {% for a in authors %}
+        <tr><td>{{ a.name }}</td><td class="muted">{{ a.bio }}</td><td class="num">{{ a.book_count }}</td>
+        <td class="actions"><a class="btn btn-ghost btn-sm" href="{{ url_for('staff.author_edit', author_id=a.id) }}">Edit</a></td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
+{% endblock %}

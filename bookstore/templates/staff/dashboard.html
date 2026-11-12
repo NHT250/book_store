@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Staff workspace{% endblock %}
+{% block content %}
+<h1>Staff workspace</h1>
+{% include "staff/_nav.html" %}
+<ul class="stats">
+  <li><a href="{{ url_for('staff.books', show='visible') }}"><strong>{{ stats.books }}</strong><span>visible books</span></a></li>
+  <li><a href="{{ url_for('staff.books', show='hidden') }}"><strong>{{ stats.hidden }}</strong><span>hidden books</span></a></li>
+  <li><a href="{{ url_for('staff.categories') }}"><strong>{{ stats.categories }}</strong><span>categories</span></a></li>
+  <li><a href="{{ url_for('staff.authors') }}"><strong>{{ stats.authors }}</strong><span>authors</span></a></li>
+  <li><a href="{{ url_for('staff.accounts') }}"><strong>{{ stats.accounts }}</strong><span>accounts</span></a></li>
+  <li><a href="{{ url_for('staff.accounts') }}"><strong>{{ stats.locked }}</strong><span>locked accounts</span></a></li>
+</ul>
+<p><a class="btn btn-primary" href="{{ url_for('staff.book_new') }}">+ Add a book</a></p>
+{% endblock %}

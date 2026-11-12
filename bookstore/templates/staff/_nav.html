@@ -1,0 +1,8 @@
+<nav class="staff-nav" aria-label="Staff">
+  {% set ep = request.endpoint or '' %}
+  <a href="{{ url_for('staff.dashboard') }}" class="{{ 'active' if ep == 'staff.dashboard' }}">Overview</a>
+  <a href="{{ url_for('staff.books') }}" class="{{ 'active' if ep.startswith('staff.book') }}">Books</a>
+  <a href="{{ url_for('staff.categories') }}" class="{{ 'active' if ep.startswith('staff.categor') }}">Categories</a>
+  <a href="{{ url_for('staff.authors') }}" class="{{ 'active' if ep.startswith('staff.author') }}">Authors</a>
+  <a href="{{ url_for('staff.accounts') }}" class="{{ 'active' if 'account' in ep }}">Accounts</a>
+</nav>

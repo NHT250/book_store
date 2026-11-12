@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "macros.html" import field_error, csrf %}
+{% block title %}Accounts{% endblock %}
+{% block content %}
+<h1>Accounts</h1>
+{% include "staff/_nav.html" %}
+<div class="two-col">
+  <section class="card">
+    <h2>Create account</h2>
+    <form method="post" novalidate data-validate>
+      {{ csrf() }}
+      <label for="full_name">Full name</label>
+      <input id="full_name" name="full_name" value="{{ form.full_name or '' }}" required maxlength="100">
+      {{ field_error(errors, 'full_name') }}
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" value="{{ form.email or '' }}" required maxlength="254">
+      {{ field_error(errors, 'email') }}
+      <label for="role">Role</label>
+      <select id="role" name="role" required>
+        <option value="">— Select a role —</option>
+        <option value="CUSTOMER" {% if form.role == 'CUSTOMER' %}selected{% endif %}>Customer</option>
+        <option value="ADMIN" {% if form.role == 'ADMIN' %}selected{% endif %}>Administrator</option>
+      </select>
+      {{ field_error(errors, 'role') }}
+      <label for="password">Password <span class="hint">(8–64 characters)</span></label>
+      <input id="password" name="password" type="password" required minlength="8" maxlength="64" autocomplete="new-password">
+      {{ field_error(errors, 'password') }}
+      <label for="confirm_password">Confirm password</label>
+      <input id="confirm_password" name="confirm_password" type="password" required data-match="password" autocomplete="new-password">
+      {{ field_error(errors, 'confirm_password') }}
+      <button type="submit" class="btn btn-primary btn-block">Create account</button>
+    </form>
+  </section>
+  <section class="card table-card">
+    <h2>All accounts <span class="muted">({{ users|length }})</span></h2>
+    <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td>{{ u.full_name }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ 'Administrator' if u.role == 'ADMIN' else 'Customer' }}</td>
+          <td><span class="badge {{ 'badge-ok' if u.status == 'ACTIVE' else 'badge-bad' }}">{{ u.status }}</span></td>
+          <td class="actions">
+            {% if u.id == g.user.id %}
+              <span class="muted">You</span>
+            {% elif u.status == 'ACTIVE' %}
+              <form method="post" action="{{ url_for('staff.lock_account', user_id=u.id) }}" class="inline" data-confirm="Lock the account {{ u.email }}? The user will no longer be able to sign in.">
+                {{ csrf() }}<button type="submit" class="btn btn-danger btn-sm">Lock</button>
+              </form>
+            {% else %}
+              <form method="post" action="{{ url_for('staff.unlock_account', user_id=u.id) }}" class="inline">
+                {{ csrf() }}<button type="submit" class="btn btn-ghost btn-sm">Unlock</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
+{% endblock %}

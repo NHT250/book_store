@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<section class="card form-card">
+  <h1>Sign in</h1>
+  {% if error %}<div class="flash flash-error" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="{{ url_for('auth.login') }}">
+    {{ csrf() }}
+    <input type="hidden" name="next" value="{{ next or '' }}">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="text" inputmode="email" value="{{ email or '' }}" autocomplete="username">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password">
+    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('auth.register') }}">Create a reader account</a></p>
+</section>
+{% endblock %}

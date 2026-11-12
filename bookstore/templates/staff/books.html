@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Manage books{% endblock %}
+{% block content %}
+<h1>Books</h1>
+{% include "staff/_nav.html" %}
+<div class="toolbar">
+  <div class="seg">
+    <a href="{{ url_for('staff.books') }}" class="{{ 'active' if show not in ('visible','hidden') }}">All</a>
+    <a href="{{ url_for('staff.books', show='visible') }}" class="{{ 'active' if show == 'visible' }}">Visible</a>
+    <a href="{{ url_for('staff.books', show='hidden') }}" class="{{ 'active' if show == 'hidden' }}">Hidden</a>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('staff.book_new') }}">+ Add a book</a>
+</div>
+<div class="card table-card"><div class="table-scroll">
+<table class="data-table">
+  <thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Category</th><th class="num">Price</th><th class="num">D1</th><th class="num">D3</th><th class="num">Thu Duc</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for b in books %}
+    <tr>
+      <td>{{ b.id }}</td>
+      <td>{{ b.title }}</td>
+      <td>{{ b.author_name }}</td>
+      <td>{{ b.category_name }}</td>
+      <td class="num">{{ b.price|vnd }}</td>
+      <td class="num">{{ b.stock_d1 }}</td><td class="num">{{ b.stock_d3 }}</td><td class="num">{{ b.stock_td }}</td>
+      <td>{% if b.is_deleted %}<span class="badge badge-bad" title="Hidden on {{ b.deleted_at }}">Hidden</span>{% else %}<span class="badge badge-ok">Visible</span>{% endif %}</td>
+      <td class="actions">
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('staff.book_edit', book_id=b.id) }}">Edit</a>
+        {% if not b.is_deleted %}
+        <form method="post" action="{{ url_for('staff.book_delete', book_id=b.id) }}" class="inline" data-confirm="Delete this book? It will be hidden from the store but its record is kept.">
+          {{ csrf() }}<button class="btn btn-danger btn-sm" type="submit">Delete</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="10" class="muted">No books.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div></div>
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
+{% endblock %}

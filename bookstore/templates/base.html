@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Book Store{% endblock %} · Team 3 Book Store</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="{{ url_for('catalog.index') }}"><span class="brand-mark">B</span> Book Store</a>
+    <nav class="main-nav" aria-label="Main">
+      <a href="{{ url_for('catalog.index') }}">Books</a>
+      {% if g.user %}
+        {% if g.user.role == 'ADMIN' %}<a href="{{ url_for('staff.dashboard') }}">Staff workspace</a>{% endif %}
+        <a href="{{ url_for('auth.account') }}" class="who">{{ g.user.full_name }}</a>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-ghost btn-sm">Sign out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Sign in</a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Register</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main class="wrap main">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}<div class="flash flash-{{ cat }}" role="status">{{ msg }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer"><div class="wrap">E-Commercial Book Store · Team 3 · Release 1.0</div></footer>
+</body>
+</html>

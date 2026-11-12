@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Books{% endblock %}
+{% block content %}
+<section class="catalog-head">
+  <h1>Books</h1>
+  <form class="filters" method="get" action="{{ url_for('catalog.index') }}" data-price-form novalidate>
+    <div class="f f-q">
+      <label for="q">Search title or author</label>
+      <input id="q" name="q" type="search" value="{{ filters.raw.q }}" maxlength="100" placeholder="e.g. Clean Code, Nguyễn Nhật Ánh">
+    </div>
+    <div class="f">
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="">All categories</option>
+        {% for c in categories %}<option value="{{ c.id }}" {% if filters.raw.category == c.id|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="f f-price">
+      <label for="min_price">Min price (₫)</label>
+      <input id="min_price" name="min_price" type="number" min="0" step="1" value="{{ filters.raw.min_price }}">
+    </div>
+    <div class="f f-price">
+      <label for="max_price">Max price (₫)</label>
+      <input id="max_price" name="max_price" type="number" min="0" step="1" value="{{ filters.raw.max_price }}">
+    </div>
+    <div class="f f-actions">
+      <button type="submit" class="btn btn-primary">Apply</button>
+      <a class="btn btn-ghost" href="{{ url_for('catalog.index') }}">Clear</a>
+    </div>
+    <p class="field-error" data-price-error role="alert" hidden></p>
+  </form>
+</section>
+
+{% if errors %}
+  <div class="flash flash-error" role="alert">{% for e in errors %}<div>{{ e }}</div>{% endfor %}</div>
+{% elif not books %}
+  <section class="empty-state">
+    <h2>No books found</h2>
+    <p>We couldn't find any books matching your criteria. Try another keyword, a different category or a wider price range.</p>
+    <a class="btn btn-ghost" href="{{ url_for('catalog.index') }}">Show all books</a>
+  </section>
+{% else %}
+  <p class="muted result-count">{{ total }} book{{ '' if total == 1 else 's' }} · page {{ page }} of {{ pages }}</p>
+  <ul class="book-grid">
+    {% for b in books %}
+    <li class="book-card">
+      <a href="{{ url_for('catalog.detail', book_id=b.id, back=current_url) }}">
+        <img src="{{ b.cover_url }}" alt="Cover of {{ b.title }}" loading="lazy" width="240" height="360">
+        <h3 class="book-title">{{ b.title }}</h3>
+      </a>
+      <p class="book-author">{{ b.author_name }}</p>
+      <p class="book-price">{{ b.price|vnd }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if pages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if page > 1 %}<a href="{{ page_links[page-2][1] }}" rel="prev">‹ Prev</a>{% endif %}
+    {% for n, href in page_links %}
+      {% if n == page %}<span aria-current="page" class="current">{{ n }}</span>{% else %}<a href="{{ href }}">{{ n }}</a>{% endif %}
+    {% endfor %}
+    {% if page < pages %}<a href="{{ page_links[page][1] }}" rel="next">Next ›</a>{% endif %}
+  </nav>
+  {% endif %}
+{% endif %}
+<script src="{{ url_for('static', filename='forms.js') }}"></script>
+{% endblock %}
