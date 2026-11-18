@@ -3,7 +3,7 @@
 {% block content %}
 <a class="back-link" href="{{ back }}">← Back to books</a>
 <article class="detail">
-  <div class="detail-cover"><img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}" width="240" height="360"></div>
+  <div class="detail-cover"><span class="book-cover"><img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}" width="240" height="360"></span></div>
   <div class="detail-body">
     <p class="eyebrow">{{ book.category_name }}</p>
     <h1>{{ book.title }}</h1>
@@ -13,11 +13,11 @@
       <dt>Author</dt><dd>{{ book.author_name }}</dd>
       <dt>Category</dt><dd>{{ book.category_name }}</dd>
     </dl>
-    <h2>Description</h2>
+    <h2>About this book</h2>
     <p class="description">{{ book.description or 'No description yet.' }}</p>
-    <h2>Stock</h2>
+    <h2>Copies in our shops</h2>
     <table class="stock-table">
-      <thead><tr><th>Store</th><th class="num">Quantity</th></tr></thead>
+      <thead><tr><th>Shop</th><th class="num">Copies</th></tr></thead>
       <tbody>
         {% for field, label in STORES %}<tr><td>{{ label }}</td><td class="num">{{ book[field] }}</td></tr>{% endfor %}
       </tbody>

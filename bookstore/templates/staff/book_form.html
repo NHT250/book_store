@@ -70,5 +70,5 @@
     {% if book and not book.is_deleted %}<a class="btn btn-ghost" href="{{ url_for('catalog.detail', book_id=book.id) }}">View in store</a>{% endif %}
   </div>
 </form>
-<script src="{{ url_for('static', filename='forms.js') }}"></script>
+<script src="{{ url_for('static', filename='forms.js', v=ASSET_V) }}"></script>
 {% endblock %}

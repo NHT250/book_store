@@ -1,5 +1,6 @@
 """E-Commercial Book Store - Team 3 (Release 1.0, F1-F5)."""
 import os
+import time
 
 from flask import Flask, g, redirect, render_template, request, url_for
 
@@ -36,6 +37,7 @@ def create_app(test_config=None):
     app.jinja_env.filters["vnd"] = format_vnd
     app.jinja_env.globals["csrf_token"] = csrf_token
     app.jinja_env.globals["STORES"] = db.STORES
+    app.jinja_env.globals["ASSET_V"] = str(int(time.time()))  # cache-busting for CSS/JS after each deploy
 
     @app.before_request
     def _before():

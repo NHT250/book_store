@@ -3,24 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Book Store{% endblock %} · Team 3 Book Store</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>{% block title %}Book Store{% endblock %} | Book Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v=ASSET_V) }}">
 </head>
 <body>
+{% set ep = request.endpoint or '' %}
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="{{ url_for('catalog.index') }}"><span class="brand-mark">B</span> Book Store</a>
+    <a class="brand" href="{{ url_for('catalog.index') }}" aria-label="Book Store home">
+      <svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true">
+        <rect x="1" y="4" width="7" height="24" rx="1" fill="#C9962B"/>
+        <rect x="10" y="1" width="7" height="27" rx="1" fill="#E3ECE7"/>
+        <rect x="19" y="6" width="6" height="22" rx="1" fill="#8FB3A5"/>
+        <rect x="26" y="3" width="7" height="25" rx="1" transform="rotate(8 29 16)" fill="#E3ECE7"/>
+        <rect x="0" y="28" width="34" height="2" fill="#C9962B"/>
+      </svg>
+      <span class="brand-name">Book Store</span>
+    </a>
     <nav class="main-nav" aria-label="Main">
-      <a href="{{ url_for('catalog.index') }}">Books</a>
+      <a href="{{ url_for('catalog.index') }}" class="{{ 'active' if ep.startswith('catalog') }}">Books</a>
       {% if g.user %}
-        {% if g.user.role == 'ADMIN' %}<a href="{{ url_for('staff.dashboard') }}">Staff workspace</a>{% endif %}
-        <a href="{{ url_for('auth.account') }}" class="who">{{ g.user.full_name }}</a>
+        {% if g.user.role == 'ADMIN' %}<a href="{{ url_for('staff.dashboard') }}" class="{{ 'active' if ep.startswith('staff') }}">Staff workspace</a>{% endif %}
+        <a href="{{ url_for('auth.account') }}" class="who {{ 'active' if ep == 'auth.account' }}">{{ g.user.full_name }}</a>
         <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="btn btn-ghost btn-sm">Sign out</button>
         </form>
       {% else %}
-        <a href="{{ url_for('auth.login') }}">Sign in</a>
+        <a href="{{ url_for('auth.login') }}" class="{{ 'active' if ep == 'auth.login' }}">Sign in</a>
         <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Register</a>
       {% endif %}
     </nav>
@@ -32,6 +45,13 @@
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer class="site-footer"><div class="wrap">E-Commercial Book Store · Team 3 · Release 1.0</div></footer>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div><strong>Book Store</strong><p>The shelves of our Ho Chi Minh City bookshops, online.</p></div>
+    <div><strong>Our shops</strong><p>District 1<br>District 3<br>Thu Duc City</p></div>
+    <div><strong>In stock?</strong><p>Each book page shows how many copies every shop has.</p></div>
+    <div><strong>Browse</strong><p><a href="{{ url_for('catalog.index') }}">All books</a><br>{% if not g.user %}<a href="{{ url_for('auth.register') }}">Create a reader account</a>{% else %}<a href="{{ url_for('auth.account') }}">My account</a>{% endif %}</p></div>
+  </div>
+</footer>
 </body>
 </html>

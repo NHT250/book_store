@@ -146,7 +146,7 @@ def detail(book_id):
     return render_template("catalog/detail.html", book=book, back=back)
 
 
-PALETTE = ["#1f4e79", "#7a2e3a", "#2f5d50", "#6b4f1d", "#4b3b78", "#1d5c63", "#7c4a1e", "#3d4a5c"]
+PALETTE = ["#173A33", "#6E2430", "#1F3550", "#7A5A1E", "#3F3356", "#1E4F57", "#5A3A24", "#33403C"]
 
 
 @bp.route("/covers/<int:book_id>.svg")
@@ -159,15 +159,19 @@ def cover(book_id):
     if row is None:
         abort(404)
     color = PALETTE[book_id % len(PALETTE)]
-    lines = textwrap.wrap(row["title"], 16)[:5]
+    lines = textwrap.wrap(row["title"], 15)[:5]
+    top = 150 - (len(lines) - 1) * 14
     title_svg = "".join(
-        f'<text x="20" y="{90 + i * 30}" font-size="22" font-weight="700" fill="#fff">{escape(line)}</text>'
+        f'<text x="120" y="{top + i * 28}" text-anchor="middle" font-size="21" font-weight="700" fill="#F7F1DF">{escape(line)}</text>'
         for i, line in enumerate(lines)
     )
+    # Cloth-bound look: fine weave texture, brass double rules and an ornament (the brand's "stamping").
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="240" height="360">
-<rect width="240" height="360" fill="{color}"/>
-<rect x="12" y="12" width="216" height="336" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+<defs><pattern id="w" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0h4M0 2h4" stroke="rgba(255,255,255,.05)" stroke-width="1"/></pattern></defs>
+<rect width="240" height="360" fill="{color}"/><rect width="240" height="360" fill="url(#w)"/>
+<g stroke="#C9962B" fill="none"><path d="M24 40h192M24 46h192M24 314h192M24 320h192" stroke-width="1.5"/>
+<path d="M108 {top + len(lines) * 28 + 6}l12 -8l12 8l-12 8z" fill="#C9962B" stroke="none"/></g>
 <g font-family="'Segoe UI', Arial, 'Noto Sans', sans-serif">{title_svg}
-<text x="20" y="320" font-size="15" fill="rgba(255,255,255,.85)">{escape(row["author"])}</text></g>
+<text x="120" y="296" text-anchor="middle" font-size="14" fill="#E9D9AE">{escape(row["author"])}</text></g>
 </svg>"""
     return Response(svg, mimetype="image/svg+xml", headers={"Cache-Control": "public, max-age=300"})

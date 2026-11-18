@@ -18,5 +18,5 @@
     <a class="btn btn-ghost" href="{{ url_for('staff.categories' if kind == 'category' else 'staff.authors') }}">Cancel</a>
   </div>
 </form>
-<script src="{{ url_for('static', filename='forms.js') }}"></script>
+<script src="{{ url_for('static', filename='forms.js', v=ASSET_V) }}"></script>
 {% endblock %}
