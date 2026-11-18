@@ -3,6 +3,7 @@ import os
 import time
 
 from flask import Flask, g, redirect, render_template, request, url_for
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from . import db
 from .security import csrf_token, load_current_user, verify_csrf
@@ -27,9 +28,15 @@ def create_app(test_config=None):
         PAGE_SIZE=12,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
+        # Hosting (Render/Railway): HTTPS terminates at the proxy.
+        SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE") == "1",
     )
     if test_config:
         app.config.update(test_config)
+    if os.environ.get("TRUST_PROXY") == "1":
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+    if app.config["SECRET_KEY"] == "dev-only-change-me" and os.environ.get("RENDER"):
+        raise RuntimeError("Set the SECRET_KEY environment variable before deploying.")
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
     db.init_db(app)
@@ -79,6 +86,11 @@ def create_app(test_config=None):
     def _too_large(err):
         return render_template("error.html", code=413, title="File too large",
                                message="Cover images must be 5 MB or smaller."), 413
+
+    @app.route("/healthz")
+    def healthz():
+        db.get_db().execute("SELECT 1").fetchone()
+        return {"status": "ok"}
 
     @app.route("/home")
     def home():

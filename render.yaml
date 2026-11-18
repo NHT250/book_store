@@ -1,0 +1,25 @@
+# Render Blueprint – free web service for Release 1.0 (R-09 / CI-10).
+# Render dashboard: New + > Blueprint > pick this repository.
+services:
+  - type: web
+    name: team3-bookstore
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # --preload creates the app (and seeds the SQLite demo data) once before the workers start.
+    startCommand: gunicorn wsgi:app --preload --workers 2 --bind 0.0.0.0:$PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      # Set these two in the dashboard so the public demo does not use the passwords in the README.
+      - key: DEMO_ADMIN_PASSWORD
+        sync: false
+      - key: DEMO_CUSTOMER_PASSWORD
+        sync: false
