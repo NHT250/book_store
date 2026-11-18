@@ -1,4 +1,5 @@
 """SQLite data layer: schema, connection handling and demo seed data."""
+import os
 import sqlite3
 from datetime import datetime, timedelta
 
@@ -168,8 +169,8 @@ def seed(conn):
     conn.executemany(
         "INSERT INTO users (full_name, email, password_hash, role, status, created_at) VALUES (?,?,?,?,?,?)",
         [
-            ("Store Administrator", "admin@bookstore.test", generate_password_hash("Admin@12345"), ROLE_ADMIN, STATUS_ACTIVE, ts),
-            ("Demo Customer", "customer@bookstore.test", generate_password_hash("Customer@123"), ROLE_CUSTOMER, STATUS_ACTIVE, ts),
+            ("Store Administrator", "admin@bookstore.test", generate_password_hash(os.environ.get("DEMO_ADMIN_PASSWORD", "Admin@12345")), ROLE_ADMIN, STATUS_ACTIVE, ts),
+            ("Demo Customer", "customer@bookstore.test", generate_password_hash(os.environ.get("DEMO_CUSTOMER_PASSWORD", "Customer@123")), ROLE_CUSTOMER, STATUS_ACTIVE, ts),
         ],
     )
     conn.executemany(

@@ -11,7 +11,7 @@ Stack: **Python 3.10+ · Flask · SQLite** (không cần cài database riêng), 
 ```bash
 pip install -r requirements.txt
 python wsgi.py            # http://127.0.0.1:5000
-python -m pytest -q       # chạy 65 test tự động
+python -m pytest -q       # chạy 67 test tự động
 ```
 
 Lần chạy đầu tiên tự tạo `instance/bookstore.sqlite3` và dữ liệu mẫu (32 sách, 5 danh mục, 8 tác giả).
@@ -23,8 +23,9 @@ Tài khoản **test** (chỉ dùng cho môi trường demo/QA — hãy đổi m�
 | Administrator | `admin@bookstore.test` | `Admin@12345` |
 | Customer | `customer@bookstore.test` | `Customer@123` |
 
-Biến môi trường: `SECRET_KEY` (bắt buộc đặt khi deploy), `DATABASE_PATH`, `SEED_DEMO_DATA=0` để tắt dữ liệu mẫu, `PORT`.
-Deploy (Render/Railway…): `gunicorn wsgi:app`.
+Biến môi trường: `SECRET_KEY` (bắt buộc khi deploy), `DEMO_ADMIN_PASSWORD`, `DEMO_CUSTOMER_PASSWORD` (đặt mật khẩu demo riêng cho bản hosting), `TRUST_PROXY=1`, `SESSION_COOKIE_SECURE=1`, `DATABASE_PATH`, `SEED_DEMO_DATA=0`, `PORT`.
+
+**Deploy miễn phí:** Render → New + → Blueprint → chọn repo này (dùng `render.yaml`); Railway dùng `Procfile`. Kiểm tra sống: `/healthz`. Đo tốc độ trang danh sách: `python scripts/benchmark_catalogue.py [--url https://…]`. Chi tiết phiên bản, lỗi đã biết: [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 ## Phạm vi theo Product Backlog
 
@@ -53,7 +54,7 @@ ChangeLog ghi *Pending CCB*. Trang chi tiết vẫn hiển thị số lượng t
 
 ## Test
 
-`tests/` có 65 test tự động; tên hàm mang mã test case của BM2 (ví dụ `test_TC_19_04_admin_cannot_lock_self`)
+`tests/` có 67 test tự động; tên hàm mang mã test case của BM2 (ví dụ `test_TC_19_04_admin_cannot_lock_self`)
 để đối chiếu với BM1 Traceability. Các TC-CR03-xx không có test vì CR-03 gốc chưa được duyệt.
 Kết quả chạy test tự động **không** thay cho việc nhóm tự chạy BM3 RunLog trên môi trường staging và ghi bằng chứng.
 
